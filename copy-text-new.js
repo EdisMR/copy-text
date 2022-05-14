@@ -22,6 +22,9 @@ containerItems.style.gridTemplateColumns = '1fr 1fr 1fr';
 containerItems.style.zIndex = '9999';
 containerItems.style.gap = '20px'
 containerItems.style.display = 'none'
+containerItems.style.fontFamily = 'sans-serif'
+containerItems.style.fontSize = '20px'
+containerItems.style.fontWeight = '500'
 document.body.appendChild(containerItems);
 
 btnSelect.setAttribute('id', 'btnSelect')
@@ -31,6 +34,8 @@ btnSelect.style.backgroundImage = 'linear-gradient(154deg, #005de9, #004ca1)'
 btnSelect.style.padding = '5px 10px'
 btnSelect.style.borderRadius = '5px'
 btnSelect.style.boxShadow = 'rgb(0, 0, 0) 0px 0px 5px'
+btnSelect.style.zIndex = '9999';
+btnSelect.style.fontFamily = 'sans-serif'
 containerItems.appendChild(btnSelect);
 
 btnCopy.setAttribute('id', 'btnCopy')
@@ -40,6 +45,8 @@ btnCopy.style.backgroundImage = 'linear-gradient(154deg, #005de9, #004ca1)'
 btnCopy.style.padding = '5px 10px'
 btnCopy.style.borderRadius = '5px'
 btnCopy.style.boxShadow = 'rgb(0, 0, 0) 0px 0px 5px'
+btnCopy.style.zIndex = '9999';
+btnCopy.style.fontFamily = 'sans-serif'
 containerItems.appendChild(btnCopy);
 
 btnFinish.setAttribute('id', 'btnFinish')
@@ -49,6 +56,8 @@ btnFinish.style.backgroundImage = 'linear-gradient(154deg, #005de9, #004ca1)'
 btnFinish.style.padding = '5px 10px'
 btnFinish.style.borderRadius = '5px'
 btnFinish.style.boxShadow = 'rgb(0, 0, 0) 0px 0px 5px'
+btnFinish.style.zIndex = '9999';
+btnFinish.style.fontFamily = 'sans-serif'
 containerItems.appendChild(btnFinish);
 
 alertSucess.setAttribute('id', 'alertSucess')
@@ -63,6 +72,8 @@ alertSucess.style.position = 'fixed'
 alertSucess.style.top = '80px'
 alertSucess.style.left = '20px'
 alertSucess.style.display = 'none'
+alertSucess.style.zIndex = '9999';
+alertSucess.style.fontFamily = 'sans-serif'
 document.body.appendChild(alertSucess);
 
 alertDanger.setAttribute('id', 'alertDanger')
@@ -77,6 +88,8 @@ alertDanger.style.position = 'fixed'
 alertDanger.style.top = '80px'
 alertDanger.style.left = '20px'
 alertDanger.style.display = 'none'
+alertDanger.style.zIndex = '9999';
+alertDanger.style.fontFamily = 'sans-serif'
 document.body.appendChild(alertDanger);
 
 alertError.setAttribute('id', 'alertError')
@@ -91,6 +104,8 @@ alertError.style.position = 'fixed'
 alertError.style.top = '80px'
 alertError.style.left = '20px'
 alertError.style.display = 'none'
+alertError.style.zIndex = '9999';
+alertError.style.fontFamily = 'sans-serif'
 document.body.appendChild(alertError);
 
 btnStart.setAttribute('id', 'btnStart')
@@ -105,6 +120,8 @@ btnStart.style.display = 'none'
 btnStart.style.position = 'fixed'
 btnStart.style.bottom = '10px'
 btnStart.style.right = '10px'
+btnStart.style.zIndex = '9999';
+btnStart.style.fontFamily = 'sans-serif'
 document.body.appendChild(btnStart);
 
 
@@ -148,6 +165,7 @@ function unmarkElement(e) {
 }
 
 function selectedElement(e) {
+	e.preventDefault()
 	chosenElement = e.target;
 
 	document.body.removeEventListener('click', selectedElement, false)
@@ -254,12 +272,19 @@ function showAlertError(text) {
 
 
 function getRandomColor(){
-	let letters = '0123456789ABCDEF';
-	let color = '#';
-	for (let i = 0; i < 6; i++) {
-		color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
+	let colors=[
+		"#e34c26",
+		"#ffb820",
+		"#f1e05a",
+		"#62c44a",
+		"#1bf8c8",
+		"#17e2fd",
+		"#388bfd",
+		"#c135e4",
+		"#c6538c",
+		"#eb3434",
+	]
+	return colors[Math.floor(Math.random() * colors.length)]
 }
 
 
@@ -278,12 +303,15 @@ function startOptions() {
 
 function finishOptions() {
 	containerItems.style.display = 'none'
-	removeAllMarks()
 	document.body.removeEventListener('contextmenu', getParent)
 	document.body.removeEventListener('click', selectedElement, false)
 	document.body.removeEventListener('mouseover', markElement, false)
 	document.body.removeEventListener('mouseout', unmarkElement, false)
 	btnStart.style.display = 'initial'
+	if(timerChangeColor){
+		clearInterval(timerChangeColor)
+	}
+	removeAllMarks()
 }
 
 finishOptions()
