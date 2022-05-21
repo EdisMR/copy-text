@@ -1,14 +1,13 @@
-'use-strict'
-
 const containerItems = document.createElement('div');
 const btnSelect = document.createElement('button');
 const btnCopy = document.createElement('button');
+const btnParent = document.createElement('button');
 const btnFinish = document.createElement('button');
 const alertSucess = document.createElement('span');
 const alertDanger = document.createElement('span');
 const alertError = document.createElement('span');
 const btnStart = document.createElement('div');
-var chosenElement = document.createElement('div');
+var chosenElement
 const alertTime = 3000
 const timeToChangeColor = 1000
 const transitionDurationValue = '1s'
@@ -28,6 +27,7 @@ containerItems.style.fontWeight = '500'
 document.body.appendChild(containerItems);
 
 btnSelect.setAttribute('id', 'btnSelect')
+btnSelect.setAttribute('title', 'Seleccionar elemento')
 btnSelect.innerText = 'Iniciar selección';
 btnSelect.style.color = '#eee'
 btnSelect.style.backgroundImage = 'linear-gradient(154deg, #005de9, #004ca1)'
@@ -36,9 +36,11 @@ btnSelect.style.borderRadius = '5px'
 btnSelect.style.boxShadow = 'rgb(0, 0, 0) 0px 0px 5px'
 btnSelect.style.zIndex = '9999';
 btnSelect.style.fontFamily = 'sans-serif'
+btnSelect.style.cursor = 'pointer'
 containerItems.appendChild(btnSelect);
 
 btnCopy.setAttribute('id', 'btnCopy')
+btnCopy.setAttribute('title', 'Copiar texto')
 btnCopy.innerText = 'Copiar Texto';
 btnCopy.style.color = '#eee'
 btnCopy.style.backgroundImage = 'linear-gradient(154deg, #005de9, #004ca1)'
@@ -47,9 +49,24 @@ btnCopy.style.borderRadius = '5px'
 btnCopy.style.boxShadow = 'rgb(0, 0, 0) 0px 0px 5px'
 btnCopy.style.zIndex = '9999';
 btnCopy.style.fontFamily = 'sans-serif'
+btnCopy.style.cursor = 'pointer'
 containerItems.appendChild(btnCopy);
 
+btnParent.setAttribute('id', 'btnParent')
+btnParent.setAttribute('title', 'Seleccionar padre del elemento')
+btnParent.innerText = '^';
+btnParent.style.color = '#eee'
+btnParent.style.backgroundImage = 'linear-gradient(154deg, #005de9, #004ca1)'
+btnParent.style.padding = '5px 10px'
+btnParent.style.borderRadius = '5px'
+btnParent.style.boxShadow = 'rgb(0, 0, 0) 0px 0px 5px'
+btnParent.style.zIndex = '9999';
+btnParent.style.fontFamily = 'sans-serif'
+btnParent.style.cursor = 'pointer'
+containerItems.appendChild(btnParent);
+
 btnFinish.setAttribute('id', 'btnFinish')
+btnFinish.setAttribute('title', 'Finalizar')
 btnFinish.innerText = 'Finalizar';
 btnFinish.style.color = '#eee'
 btnFinish.style.backgroundImage = 'linear-gradient(154deg, #005de9, #004ca1)'
@@ -58,6 +75,7 @@ btnFinish.style.borderRadius = '5px'
 btnFinish.style.boxShadow = 'rgb(0, 0, 0) 0px 0px 5px'
 btnFinish.style.zIndex = '9999';
 btnFinish.style.fontFamily = 'sans-serif'
+btnFinish.style.cursor = 'pointer'
 containerItems.appendChild(btnFinish);
 
 alertSucess.setAttribute('id', 'alertSucess')
@@ -122,6 +140,8 @@ btnStart.style.bottom = '10px'
 btnStart.style.right = '10px'
 btnStart.style.zIndex = '9999';
 btnStart.style.fontFamily = 'sans-serif'
+btnStart.style.cursor = 'pointer'
+btnStart.style.userSelect = 'none'
 document.body.appendChild(btnStart);
 
 
@@ -138,6 +158,7 @@ btnSelect.addEventListener('click', startSelection)
 btnCopy.addEventListener('click', copyNow)
 btnFinish.addEventListener('click', finishOptions)
 btnStart.addEventListener('click', startOptions)
+btnParent.addEventListener('click', getParent)
 
 
 
@@ -180,8 +201,6 @@ function selectedElement(e) {
 		chosenElement.style.transitionDuration = transitionDurationValue
 		chosenElement.style.outline = `2px solid ${getRandomColor()}`
 	}, timeToChangeColor);
-
-	document.body.addEventListener('contextmenu', getParent)
 }
 
 function removeAllMarks() {
@@ -209,8 +228,13 @@ function getParent(ev) {
 		removeAllMarks()
 		chosenElement.style.outline = "2px solid #0f0"
 	} catch (err) {
-		showAlertDanger("⚠ Se ha seleccionado toda la página 👀")
-		chosenElement = selectedCurrently
+		if(chosenElement){
+			showAlertDanger("⚠ Se ha seleccionado toda la página 👀")
+			chosenElement = selectedCurrently
+			console.log(selectedCurrently,err);
+		}else{
+			showAlertError("❌ No se ha seleccionado nada 🤔🤔")
+		}
 	}
 }
 
@@ -220,12 +244,16 @@ function getParent(ev) {
 
 
 function copyNow() {
-	window.navigator.clipboard.writeText(chosenElement.innerText)
+	if(chosenElement){
+		window.navigator.clipboard.writeText(chosenElement.innerText)
 		.then(function () {
 			showAlertSucess("✔ Seeepe, texto copiado 😄")
 		}).catch(function (err) {
 			showAlertError("❌ Nopes... Error al copiar 🤔🤔")
 		});
+	}else{
+		showAlertError("❌ Nopes... No has seleccionado nada 🤔🤔")
+	}
 }
 
 
@@ -298,12 +326,10 @@ function getRandomColor(){
 function startOptions() {
 	containerItems.style.display = 'initial'
 	btnStart.style.display = 'none'
-	chosenElement = document.createElement('div');
 }
 
 function finishOptions() {
 	containerItems.style.display = 'none'
-	document.body.removeEventListener('contextmenu', getParent)
 	document.body.removeEventListener('click', selectedElement, false)
 	document.body.removeEventListener('mouseover', markElement, false)
 	document.body.removeEventListener('mouseout', unmarkElement, false)
